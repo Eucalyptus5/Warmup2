@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'warm_up_one'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=warm_up_one",
+                    "--package=warm_up_one"
+                ],
+                "filter": {
+                    "name": "warm_up_one",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'warm_up_one'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=warm_up_one",
+                    "--package=warm_up_one"
+                ],
+                "filter": {
+                    "name": "warm_up_one",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
