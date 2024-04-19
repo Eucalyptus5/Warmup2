@@ -1,13 +1,18 @@
 mod tokenizer;
-use tokenizer::{Tokenizer, Token};
+mod parser;
 
+use parser::Parser;
 fn main() {
-    let mut tokenizer = Tokenizer::new("var x = 100 + 20 - 2;");
-    loop {
-        let token = tokenizer.next_token();
-        println!("{:?}", token);
-        if token == Token::EOF {
-            break;
-        }
-    }
+    let mut parser = Parser::new("2 + 1 * ((2 + 3) * 4)");
+    let result = parser.parse_computation();
+    println!("{}", result);
+
+    // let mut tokenizer = Tokenizer::new("var i <- 2 * 3; var abracadabra <- 7; (((abracadabra * i))); i - 5 - 1;");
+    // loop {
+    //     let token = tokenizer.next_token();
+    //     println!("{:?}", token);
+    //     if token == Token::EOF {
+    //         break;
+    //     }
+    // }
 }

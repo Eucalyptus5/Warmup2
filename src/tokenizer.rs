@@ -1,6 +1,6 @@
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    Number(i64),
+    Number(i32),
     Plus,
     Minus,
     Star,
@@ -28,6 +28,19 @@ impl<'a> Tokenizer<'a> {
         self.input.chars().nth(self.pos).unwrap_or('\0')
     }
 
+    pub fn peek_token(&mut self) -> Token {
+        let current_pos = self.pos;
+        let next_token = self.next_token();
+        self.pos = current_pos;
+        next_token
+    }
+
+    pub fn backtrack(&mut self) {
+        if self.pos > 0 {
+            self.pos -= 1;
+        }
+    }
+
     fn next_char(&mut self) -> char {
         let c = self.input.chars().nth(self.pos).unwrap_or('\0');
         self.pos += 1;
@@ -51,7 +64,7 @@ impl<'a> Tokenizer<'a> {
 
     fn tokenize_number(&mut self) -> Token {
         let number_str = self.consume_while(|c| c.is_digit(10));
-        Token::Number(number_str.parse::<i64>().unwrap())
+        Token::Number(number_str.parse::<i32>().unwrap())
     }
 
     fn tokenize_identifier_or_keyword(&mut self) -> Token {
