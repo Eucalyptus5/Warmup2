@@ -32,13 +32,22 @@ impl<'a> Parser<'a> {
             self.parse_assignment();
         }
     }
+
+    fn multiple_expression(&mut self) {
+        loop {
+            println!("{}", self.parse_expression());
+            match self.tokenizer.next_token() {
+                Token::Semicolon => (),
+                Token::EOF => break,
+                _ => panic!("Unexpected end to expression, symbol: {:?}", self.tokenizer.peek_token()),
+            }
+        }
+    }
     
-    pub fn parse_computation(&mut self) -> i32 {
+    pub fn parse_computation(&mut self) {
         self.match_char(Token::Computation);
         self.parse_statement();
-        let result = self.parse_expression();
-        self.match_char(Token::EOF);
-        result
+        self.multiple_expression();
     }
 
     fn parse_expression(&mut self) -> i32 {
@@ -102,7 +111,7 @@ impl<'a> Parser<'a> {
                 self.tokenizer.next_token();
                 *self.symbol_table.get(&id).unwrap_or_else(|| panic!("Undefined variable: {}", id))
             }
-            _ => panic!("Unexpected factor"),
+            _ => panic!("Unexpected factor, got {:?}", next_token),
         }
     }
     
