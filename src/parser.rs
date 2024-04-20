@@ -15,17 +15,27 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_assignment(&mut self) {
-
+        match self.tokenizer.next_token() {
+            Token::Identifier(name) => {
+                self.match_char(Token::Assignment);
+                let value = self.parse_expression();
+                self.symbol_table.insert(name, value);
+            },
+            _ => panic!("Expected identifier"),
+        }
+        self.match_char(Token::Semicolon);
     }
 
     fn parse_statement(&mut self) {
         while self.tokenizer.peek_token() == Token::Var {
-
+            self.tokenizer.next_token();
+            self.parse_assignment();
         }
     }
     
     pub fn parse_computation(&mut self) -> i32 {
         self.match_char(Token::Computation);
+        self.parse_statement();
         let result = self.parse_expression();
         self.match_char(Token::EOF);
         result

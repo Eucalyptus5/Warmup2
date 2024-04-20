@@ -36,12 +36,6 @@ impl<'a> Tokenizer<'a> {
         next_token
     }
 
-    pub fn backtrack(&mut self) {
-        if self.pos > 0 {
-            self.pos -= 1;
-        }
-    }
-
     fn next_char(&mut self) -> char {
         let c = self.input.chars().nth(self.pos).unwrap_or('\0');
         self.pos += 1;
@@ -73,7 +67,7 @@ impl<'a> Tokenizer<'a> {
         let identifier = self.consume_while(|c| c.is_alphanumeric() || c == '_');
         match identifier.as_str() {
             "var" => Token::Var,
-            "Computation" => Token::Computation,
+            "computation" => Token::Computation,
             _ => Token::Identifier(identifier),
         }
     }
