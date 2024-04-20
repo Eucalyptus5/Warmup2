@@ -9,6 +9,7 @@ pub enum Token {
     Assignment,
     Semicolon,
     Var,
+    Computation,
     OpenParen,
     CloseParen,
     EOF,
@@ -44,6 +45,7 @@ impl<'a> Tokenizer<'a> {
     fn next_char(&mut self) -> char {
         let c = self.input.chars().nth(self.pos).unwrap_or('\0');
         self.pos += 1;
+        
         c
     }
 
@@ -71,6 +73,7 @@ impl<'a> Tokenizer<'a> {
         let identifier = self.consume_while(|c| c.is_alphanumeric() || c == '_');
         match identifier.as_str() {
             "var" => Token::Var,
+            "Computation" => Token::Computation,
             _ => Token::Identifier(identifier),
         }
     }
@@ -97,7 +100,7 @@ impl<'a> Tokenizer<'a> {
                 }
             },
             _ if c.is_alphabetic() => self.tokenize_identifier_or_keyword(),
-            '\0' => Token::EOF,
+            '.' => Token::EOF,
             _ => panic!("Unexpected character: {}", c),
         }
     }

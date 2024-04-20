@@ -3,19 +3,31 @@ use std::collections::HashMap;
 
 pub struct Parser<'a> {
     tokenizer: Tokenizer<'a>,
-    symbol_table: std::collections::HashMap<String, i32>,
+    symbol_table: HashMap<String, i32>,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(input: &'a str) -> Self {
         Parser {
             tokenizer: Tokenizer::new(input),
-            symbol_table: std::collections::HashMap::new(),
+            symbol_table: HashMap::new(),
+        }
+    }
+
+    fn parse_assignment(&mut self) {
+
+    }
+
+    fn parse_statement(&mut self) {
+        while self.tokenizer.peek_token() == Token::Var {
+
         }
     }
     
     pub fn parse_computation(&mut self) -> i32 {
+        self.match_char(Token::Computation);
         let result = self.parse_expression();
+        self.match_char(Token::EOF);
         result
     }
 
@@ -77,6 +89,7 @@ impl<'a> Parser<'a> {
                 value
             }
             Token::Identifier(id) => {
+                self.tokenizer.next_token();
                 *self.symbol_table.get(&id).unwrap_or_else(|| panic!("Undefined variable: {}", id))
             }
             _ => panic!("Unexpected factor"),
