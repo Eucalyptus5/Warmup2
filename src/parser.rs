@@ -20,7 +20,7 @@ impl<'a> Parser<'a> {
                 self.match_char(Token::Assignment);
                 let value = self.parse_expression();
                 self.symbol_table.insert(name, value);
-            },
+            }
             _ => panic!("Expected identifier"),
         }
         self.match_char(Token::Semicolon);
@@ -39,11 +39,14 @@ impl<'a> Parser<'a> {
             match self.tokenizer.next_token() {
                 Token::Semicolon => (),
                 Token::EOF => break,
-                _ => panic!("Unexpected end to expression, symbol: {:?}", self.tokenizer.peek_token()),
+                _ => panic!(
+                    "Unexpected end to expression, symbol: {:?}",
+                    self.tokenizer.peek_token()
+                ),
             }
         }
     }
-    
+
     pub fn parse_computation(&mut self) {
         self.match_char(Token::Computation);
         self.parse_statement();
@@ -66,10 +69,10 @@ impl<'a> Parser<'a> {
                 _ => break,
             }
         }
-    
+
         result
     }
-    
+
     fn parse_term(&mut self) -> i32 {
         let mut result = self.parse_factor();
         loop {
@@ -90,10 +93,10 @@ impl<'a> Parser<'a> {
                 _ => break,
             }
         }
-    
+
         result
     }
-    
+
     fn parse_factor(&mut self) -> i32 {
         let next_token = self.tokenizer.peek_token();
         match next_token {
@@ -102,19 +105,22 @@ impl<'a> Parser<'a> {
                 let result = self.parse_expression();
                 self.match_char(Token::CloseParen);
                 result
-            },
+            }
             Token::Number(value) => {
                 self.tokenizer.next_token();
                 value
             }
             Token::Identifier(id) => {
                 self.tokenizer.next_token();
-                *self.symbol_table.get(&id).unwrap_or_else(|| panic!("Undefined variable: {}", id))
+                *self
+                    .symbol_table
+                    .get(&id)
+                    .unwrap_or_else(|| panic!("Undefined variable: {}", id))
             }
             _ => panic!("Unexpected factor, got {:?}", next_token),
         }
     }
-    
+
     fn match_char(&mut self, expected: Token) {
         match self.tokenizer.next_token() {
             t if t == expected => (),

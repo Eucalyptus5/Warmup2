@@ -39,7 +39,7 @@ impl<'a> Tokenizer<'a> {
     fn next_char(&mut self) -> char {
         let c = self.input.chars().nth(self.pos).unwrap_or('\0');
         self.pos += 1;
-        
+
         c
     }
 
@@ -77,13 +77,34 @@ impl<'a> Tokenizer<'a> {
         let c = self.peek();
         match c {
             '0'..='9' => self.tokenize_number(),
-            '+' => { self.next_char(); Token::Plus },
-            '-' => { self.next_char(); Token::Minus },
-            '*' => { self.next_char(); Token::Star },
-            '/' => { self.next_char(); Token::Slash },
-            ';' => { self.next_char(); Token::Semicolon },
-            '(' => { self.next_char(); Token::OpenParen },
-            ')' => { self.next_char(); Token::CloseParen },
+            '+' => {
+                self.next_char();
+                Token::Plus
+            }
+            '-' => {
+                self.next_char();
+                Token::Minus
+            }
+            '*' => {
+                self.next_char();
+                Token::Star
+            }
+            '/' => {
+                self.next_char();
+                Token::Slash
+            }
+            ';' => {
+                self.next_char();
+                Token::Semicolon
+            }
+            '(' => {
+                self.next_char();
+                Token::OpenParen
+            }
+            ')' => {
+                self.next_char();
+                Token::CloseParen
+            }
             '<' => {
                 self.next_char();
                 if self.peek() == '-' {
@@ -92,7 +113,7 @@ impl<'a> Tokenizer<'a> {
                 } else {
                     panic!("Unexpected character after '<': {}", self.peek());
                 }
-            },
+            }
             _ if c.is_alphabetic() => self.tokenize_identifier_or_keyword(),
             '.' => Token::EOF,
             _ => panic!("Unexpected character: {}", c),
