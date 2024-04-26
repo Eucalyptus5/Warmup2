@@ -1,12 +1,15 @@
+/// Import required modules and types from external crates and other parts of the program.
 use crate::tokenizer::{Token, Tokenizer};
 use std::collections::HashMap;
 
+/// Parser struct which uses a tokenizer for token processing and a symbol table for variable management.
 pub struct Parser {
     tokenizer: Tokenizer,
     symbol_table: HashMap<String, i32>,
 }
 
 impl Parser {
+    /// Constructs a new Parser with the given input string.
     pub fn new(input: String) -> Self {
         Parser {
             tokenizer: Tokenizer::new(input),
@@ -14,6 +17,7 @@ impl Parser {
         }
     }
 
+    /// Parses an assignment statement, expecting an identifier followed by an assignment token and an expression.
     fn parse_assignment(&mut self) {
         match self.tokenizer.next_token() {
             Token::Identifier(name) => {
@@ -26,13 +30,15 @@ impl Parser {
         self.match_char(Token::Semicolon);
     }
 
+    /// Parses statements, specifically variable declarations followed by assignments.
     fn parse_statement(&mut self) {
-        while self.tokenizer.peek_token() == Token::Var {
+        while self.tokenizer.peek_token() == Token::Variable {
             self.tokenizer.next_token();
             self.parse_assignment();
         }
     }
 
+    /// Evaluates multiple expressions, printing their results, until it encounters an EOF or unexpected token.
     fn multiple_expression(&mut self) {
         loop {
             println!("{}", self.parse_expression());
@@ -47,12 +53,14 @@ impl Parser {
         }
     }
 
+    /// Parses the computation section of a script, starting with a computation token, followed by statements and expressions.
     pub fn parse_computation(&mut self) {
         self.match_char(Token::Computation);
         self.parse_statement();
         self.multiple_expression();
     }
 
+    /// Parses an expression, which can consist of terms added or subtracted together.
     fn parse_expression(&mut self) -> i32 {
         let mut result = self.parse_term();
         loop {
@@ -73,16 +81,17 @@ impl Parser {
         result
     }
 
+    /// Parses a term, which can consist of factors multiplied or divided.
     fn parse_term(&mut self) -> i32 {
         let mut result = self.parse_factor();
         loop {
             let next_token = self.tokenizer.peek_token();
             match next_token {
-                Token::Star => {
+                Token::Times => {
                     self.tokenizer.next_token();
                     result *= self.parse_factor();
                 }
-                Token::Slash => {
+                Token::Divide => {
                     self.tokenizer.next_token();
                     let divisor = self.parse_factor();
                     if divisor == 0 {
@@ -97,6 +106,7 @@ impl Parser {
         result
     }
 
+    /// Parses a factor, which can be a number, a variable, or a nested expression within parentheses.
     fn parse_factor(&mut self) -> i32 {
         let next_token = self.tokenizer.peek_token();
         match next_token {
@@ -121,6 +131,7 @@ impl Parser {
         }
     }
 
+    /// Ensures that the next token matches the expected token, panics otherwise.
     fn match_char(&mut self, expected: Token) {
         match self.tokenizer.next_token() {
             t if t == expected => (),
