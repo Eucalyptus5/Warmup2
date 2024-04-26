@@ -15,18 +15,21 @@ pub enum Token {
     EOF,
 }
 
-pub struct Tokenizer<'a> {
-    input: &'a str,
+pub struct Tokenizer {
+    input: Vec<u8>,
     pos: usize,
 }
 
-impl<'a> Tokenizer<'a> {
-    pub fn new(input: &'a str) -> Self {
-        Tokenizer { input, pos: 0 }
+impl Tokenizer {
+    pub fn new(input_string: String) -> Self {
+        Tokenizer { 
+            input: input_string.into_bytes(), 
+            pos: 0 
+        }
     }
 
     pub fn peek(&self) -> char {
-        self.input.chars().nth(self.pos).unwrap_or('\0')
+        self.input[self.pos] as char
     }
 
     pub fn peek_token(&mut self) -> Token {
@@ -37,7 +40,7 @@ impl<'a> Tokenizer<'a> {
     }
 
     fn next_char(&mut self) -> char {
-        let c = self.input.chars().nth(self.pos).unwrap_or('\0');
+        let c = self.peek();
         self.pos += 1;
 
         c
@@ -77,34 +80,13 @@ impl<'a> Tokenizer<'a> {
         let c = self.peek();
         match c {
             '0'..='9' => self.tokenize_number(),
-            '+' => {
-                self.next_char();
-                Token::Plus
-            }
-            '-' => {
-                self.next_char();
-                Token::Minus
-            }
-            '*' => {
-                self.next_char();
-                Token::Star
-            }
-            '/' => {
-                self.next_char();
-                Token::Slash
-            }
-            ';' => {
-                self.next_char();
-                Token::Semicolon
-            }
-            '(' => {
-                self.next_char();
-                Token::OpenParen
-            }
-            ')' => {
-                self.next_char();
-                Token::CloseParen
-            }
+            '+' => { self.next_char(); Token::Plus }
+            '-' => { self.next_char(); Token::Minus }
+            '*' => { self.next_char(); Token::Star }
+            '/' => { self.next_char(); Token::Slash }
+            ';' => { self.next_char(); Token::Semicolon }
+            '(' => { self.next_char(); Token::OpenParen }
+            ')' => { self.next_char(); Token::CloseParen }
             '<' => {
                 self.next_char();
                 if self.peek() == '-' {
